@@ -261,7 +261,7 @@ public class OrderController {
 	*********************************************************************/
 	@GetMapping("/showOrder/{id}")
 	public Order showOrder(@PathVariable long id){		
-		return OrderService.showOrder(id);	
+		return orderService.showOrder(id);	
 	}
 	
 }

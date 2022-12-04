@@ -46,6 +46,21 @@ public abstract class UserService {
 		
 		
 		User user;
+		
+		user = Manager.get().getTeleRepository().findByEmailAndPwd(email, pwd);
+		
+		if (user != null) {
+			if (!user.isActiveAccount()) {
+				JSONObject response = new JSONObject();
+				response.put(ERRORACCOUNT, ACCOUNTNOTACTIVATED);
+				return new ResponseEntity<>(response.toString(), HttpStatus.UNAUTHORIZED);
+			}
+			
+			
+			JSONObject response = new JSONObject(user);
+			response.put("role", "TELE");
+			return new ResponseEntity<>(response.toString(), HttpStatus.OK);
+		}
 			
 		user = Manager.get().getAdminRepository().findByEmailAndPwd(email, pwd);
 		

@@ -11,6 +11,7 @@ import uclm.esi.equipo01.dao.OrderRepository;
 import uclm.esi.equipo01.dao.PlateRepository;
 import uclm.esi.equipo01.dao.RestaurantRepository;
 import uclm.esi.equipo01.dao.RiderRepository;
+import uclm.esi.equipo01.dao.TelefonoRepository;
 import uclm.esi.equipo01.dao.PlateAndOrderRepository;
 import uclm.esi.equipo01.service.SequenceGeneratorService;
 
@@ -31,6 +32,9 @@ public class Manager {
 	
 	@Autowired
 	private RiderRepository riderRepository;
+	
+	@Autowired
+	private TelefonoRepository teleRepository;
 	
 	@Autowired
 	private ClientRepository clientRepository; 
@@ -100,6 +104,10 @@ public class Manager {
 	
 	public AdminRepository getAdminRepository() {
 		return adminRepository;
+	}
+	
+	public TelefonoRepository getTeleRepository() {
+		return teleRepository;
 	}
 	
 	public RiderRepository getRiderRepository() {

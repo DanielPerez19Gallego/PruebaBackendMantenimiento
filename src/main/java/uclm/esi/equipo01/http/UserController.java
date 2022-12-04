@@ -6,6 +6,8 @@ import com.github.openjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import uclm.esi.equipo01.service.AdminService;
 import uclm.esi.equipo01.service.ClientService;
 import uclm.esi.equipo01.service.RiderService;
+import uclm.esi.equipo01.service.SessionService;
 
 /*********************************************************************
 *
@@ -100,6 +103,14 @@ public class UserController {
 	* is thrown: None.
 	*
 	*********************************************************************/
+	
+	private static SessionService sessionService;
+	
+	@Autowired
+	public void setSessionService(SessionService sessionService) {
+		UserController.sessionService = sessionService;
+	}
+	
 	@PostMapping("/register")
 	public ResponseEntity<String> register(@RequestBody Map<String, Object> info){
 
@@ -134,5 +145,21 @@ public class UserController {
 		JSONObject jso = new JSONObject(info);
 		return clientService.login(jso);			
 	}
+	
+	@PostMapping("/dameRol")
+	public ResponseEntity<String> dameRol(@RequestBody Map<String, Object> info){
+		JSONObject jso = new JSONObject(info);
+		return sessionService.dameRol(jso);			
+	}
+	
+	@GetMapping("/dameIdCliente/{email}")
+	public ResponseEntity<String> dameRol(@PathVariable String email){
+		return sessionService.dameIdCliente(email);			
+	}
+	/*
+	@PostMapping("/anadirtel")
+	public void oooaaa(){
+		sessionService.creaTel();	
+	}*/
 
 }

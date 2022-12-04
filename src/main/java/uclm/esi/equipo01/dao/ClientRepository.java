@@ -15,5 +15,7 @@ import uclm.esi.equipo01.model.Client;
 public interface ClientRepository extends MongoRepository<Client, Long> {
 	
 	Client findByEmailAndPwd(String email, String pwd);
+
+	Client findByEmail(String email);
 	
 }

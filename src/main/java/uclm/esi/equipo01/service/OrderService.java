@@ -361,5 +361,36 @@ public class OrderService {
 		return orderRates.get();
 	}
 
+	public ResponseEntity<String> modificaOrden(JSONObject jso, long id) {
+		Optional<Order> optOrder = Manager.get().getOrderRepository().findById(id);	
+		if(!optOrder.isPresent()) {
+			return new ResponseEntity<>("Pedido no encontrado", HttpStatus.BAD_REQUEST);
+		}
+		Order order = optOrder.get();
+		
+		order.setPrice(jso.getDouble("price"));
+		order.setReleaseDate(LocalDateTime.parse(jso.getString("releaseDate")));	
+		String state = jso.getString("state");
+		order.setClientID(jso.getLong("clientID"));
+		order.setRiderID(jso.getLong("riderID"));
+		order.setRestaurantID(jso.getLong("restaurantID"));
+		
+		switch(state){
+		case "NEW":
+			order.setState(State.NEW);
+			break;
+		case "ONTHEWAY":
+			order.setState(State.ONTHEWAY);
+			break;
+		default:
+			order.setState(State.DELIVERED);
+			break;
+		}
+		
+		Manager.get().getOrderRepository().save(order);
+		return new ResponseEntity<>("Pedido modificado correctamente", HttpStatus.OK);
+		
+	}
+
 
 }

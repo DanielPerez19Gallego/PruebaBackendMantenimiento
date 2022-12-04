@@ -240,6 +240,12 @@ public class OrderController {
 	public List<PlateAndOrder>showPlatesByOrder(@PathVariable long id ){
 		return orderService.showPlatesByOrder(id);	
 	}
+	
+	@PostMapping("/modificarOrden/{id]")
+	public ResponseEntity<String> modificarOrden(@RequestBody Map<String, Object> info, @PathVariable long id){		
+		JSONObject jso = new JSONObject(info);
+		return orderService.modificaOrden(jso, id);	
+	}
 	/*********************************************************************
 	*
 	* - Method name: showOrder

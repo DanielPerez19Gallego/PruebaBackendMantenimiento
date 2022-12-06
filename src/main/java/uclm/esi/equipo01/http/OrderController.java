@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,6 +20,7 @@ import uclm.esi.equipo01.model.Order;
 import uclm.esi.equipo01.model.OrderRate;
 import uclm.esi.equipo01.model.PlateAndOrder;
 import uclm.esi.equipo01.service.OrderService;
+import uclm.esi.equipo01.service.SessionService;
 
 /*********************************************************************
 *
@@ -52,6 +54,13 @@ public class OrderController {
 		OrderController.orderService = orderService;
 	}
 	
+	private static SessionService sessionService;
+	
+	@Autowired
+	public void setSessionService(SessionService sessionService) {
+		OrderController.sessionService = sessionService;
+	}
+	
 	/*********************************************************************
 	*
 	* - Method name: makeOrder
@@ -68,6 +77,15 @@ public class OrderController {
 	*********************************************************************/
 	@PostMapping("/makeOrder/{id}")
 	public ResponseEntity<String> makeOrder(@RequestBody Map<String, Object> info, @PathVariable long id) {
+		JSONObject jso = new JSONObject(info);
+		return orderService.makeOrder(jso, id);		
+	}
+	
+	@PostMapping("/makeOrderByEmail/{email}")
+	public ResponseEntity<String> makeOrderByEmail(@RequestBody Map<String, Object> info, @PathVariable String email) {
+		long id = sessionService.dameIdCliente(email);
+		if (id == 0)
+			return new ResponseEntity<>("No existe ese cliente", HttpStatus.EXPECTATION_FAILED);
 		JSONObject jso = new JSONObject(info);
 		return orderService.makeOrder(jso, id);		
 	}
@@ -261,7 +279,7 @@ public class OrderController {
 	*********************************************************************/
 	@GetMapping("/showOrder/{id}")
 	public Order showOrder(@PathVariable long id){		
-		return orderService.showOrder(id);	
+		return OrderService.showOrder(id);	
 	}
 	
 }

@@ -15,6 +15,7 @@ import uclm.esi.equipo01.model.Telefono;
 @Service
 public class SessionService {
 
+	/*
 	public ResponseEntity<String> dameRol(JSONObject jso) {
 		String email = jso.getString("email");
 		String pwd = jso.getString("pwd");
@@ -30,13 +31,13 @@ public class SessionService {
 		
 		return new ResponseEntity<>("NADA", HttpStatus.OK);
 
-	}
+	}*/
 
-	public ResponseEntity<String> dameIdCliente(String email) {
+	public long dameIdCliente(String email) {
 		Client client = Manager.get().getClientRepository().findByEmail(email);
 		if (client != null)
-			return new ResponseEntity<>(client.getId()+"", HttpStatus.OK);
-		return new ResponseEntity<>("No existe ese email", HttpStatus.OK);
+			return client.getId();
+		return 0;
 	}
 	/*
 	public void creaTel() {

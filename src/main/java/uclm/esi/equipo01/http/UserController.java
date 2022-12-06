@@ -145,17 +145,12 @@ public class UserController {
 		JSONObject jso = new JSONObject(info);
 		return clientService.login(jso);			
 	}
-	
+	/*
 	@PostMapping("/dameRol")
 	public ResponseEntity<String> dameRol(@RequestBody Map<String, Object> info){
 		JSONObject jso = new JSONObject(info);
 		return sessionService.dameRol(jso);			
-	}
-	
-	@GetMapping("/dameIdCliente/{email}")
-	public ResponseEntity<String> dameRol(@PathVariable String email){
-		return sessionService.dameIdCliente(email);			
-	}
+	}*/
 	/*
 	@PostMapping("/anadirtel")
 	public void oooaaa(){

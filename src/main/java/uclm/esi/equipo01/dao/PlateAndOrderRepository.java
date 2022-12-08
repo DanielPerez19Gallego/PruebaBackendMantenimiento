@@ -17,4 +17,6 @@ import uclm.esi.equipo01.model.PlateAndOrder;
 public interface PlateAndOrderRepository extends MongoRepository<PlateAndOrder, Long>{
 
 	List<PlateAndOrder> findPlateAndOrderByOrderID(long orderID);
+	
+	void deleteAllByOrderID(long orderID);
 }

@@ -53,7 +53,6 @@ public class OrderService {
 		Iterator<String> keys = plates.keys();
 		
 		Order order = new Order(clientID, restaurantID);
-		
 		while(keys.hasNext()) {
 			String key = keys.next();
 			JSONObject aux = new JSONObject(plates.get(key));
@@ -88,6 +87,7 @@ public class OrderService {
 		if (!Manager.get().getOrderRepository().existsById(idOrder)) {
 			return new ResponseEntity<>("Plato no encontrado", HttpStatus.BAD_REQUEST);
 		}
+		Manager.get().getPlateAndOrderRepository().deleteAllByOrderID(idOrder);
 		Manager.get().getOrderRepository().deleteById(idOrder);
 		return new ResponseEntity<>("Plato eliminado correctamente", HttpStatus.OK);
 	}
@@ -362,32 +362,35 @@ public class OrderService {
 	}
 
 	public ResponseEntity<String> modificaOrden(JSONObject jso, long id) {
+		double totalPrice = 0;
 		Optional<Order> optOrder = Manager.get().getOrderRepository().findById(id);	
 		if(!optOrder.isPresent()) {
 			return new ResponseEntity<>("Pedido no encontrado", HttpStatus.BAD_REQUEST);
 		}
-		Order order = optOrder.get();
 		
-		order.setPrice(jso.getDouble("price"));
-		order.setReleaseDate(LocalDateTime.parse(jso.getString("releaseDate")));	
-		String state = jso.getString("state");
-		order.setClientID(jso.getLong("clientID"));
-		order.setRiderID(jso.getLong("riderID"));
-		order.setRestaurantID(jso.getLong("restaurantID"));
+		Manager.get().getPlateAndOrderRepository().deleteAllByOrderID(id);
+		Manager.get().getOrderRepository().deleteById(id);
+		long restaurantID = Long.parseLong(jso.getString("restaurantID"));
+		long clientID = Long.parseLong(jso.getString("clientID"));
 		
-		switch(state){
-		case "NEW":
-			order.setState(State.NEW);
-			break;
-		case "ONTHEWAY":
-			order.setState(State.ONTHEWAY);
-			break;
-		default:
-			order.setState(State.DELIVERED);
-			break;
+		JSONObject plates = new JSONObject(jso.getString("cart"));
+		Iterator<String> keys = plates.keys();
+		
+		while(keys.hasNext()) {
+			String key = keys.next();
+			JSONObject aux = new JSONObject(plates.get(key));
+			double price = Double.parseDouble(aux.getString("price"));
+			int quantity = Integer.parseInt(aux.getString("quantity"));
+			totalPrice += price*quantity;
+			
+			PlateAndOrder plateAndOrder = new PlateAndOrder(Long.parseLong(key), optOrder.get().getId(), quantity);
+			
+			Manager.get().getPlateAndOrderRepository().save(plateAndOrder);
 		}
 		
-		Manager.get().getOrderRepository().save(order);
+		Order order2 = new Order(id, clientID, restaurantID, 0, optOrder.get().getState(), totalPrice, optOrder.get().getReleaseDate());
+		
+		Manager.get().getOrderRepository().save(order2);
 		return new ResponseEntity<>("Pedido modificado correctamente", HttpStatus.OK);
 		
 	}

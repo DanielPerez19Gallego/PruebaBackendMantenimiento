@@ -29,7 +29,7 @@ import uclm.esi.equipo01.service.SessionService;
 *
 **********************************************************************/
 
-@CrossOrigin(origins = {"https://ticomo01.web.app", "http://localhost:3000"})
+@CrossOrigin(origins = {"https://ticomo-c4ec0.web.app/", "http://localhost:3000"})
 @RestController
 @RequestMapping("order")
 public class OrderController {

@@ -25,7 +25,7 @@ import uclm.esi.equipo01.service.RestaurantService;
 *
 **********************************************************************/
 
-@CrossOrigin(origins = {"https://ticomo01.web.app", "http://localhost:3000"})
+@CrossOrigin
 @RestController
 @RequestMapping("restaurant")
 public class RestaurantController {

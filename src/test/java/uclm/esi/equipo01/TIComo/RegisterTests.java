@@ -27,6 +27,7 @@ import uclm.esi.equipo01.http.UserController;
 import uclm.esi.equipo01.model.Client;
 import uclm.esi.equipo01.model.DatabaseSequence;
 import uclm.esi.equipo01.service.ClientService;
+import uclm.esi.equipo01.service.SessionService;
 import uclm.esi.equipo01.service.UserService;
 
 /*********************************************************************
@@ -46,6 +47,9 @@ public class RegisterTests {
 	
 	private UserController controller;
 	private UserService service;
+	
+	@Autowired 
+	private SessionService sessionService;
 	
     private static MongoOperations mongoOperations;
 
@@ -144,7 +148,11 @@ public class RegisterTests {
 		ResponseEntity<String> httpResponse = controller.register(info);
 		
 		assertEquals(HttpStatus.OK, httpResponse.getStatusCode());
+		
+		assertEquals(1, sessionService.dameIdCliente("pepito.45@gmail.com"));
+		assertEquals(0, sessionService.dameIdCliente("NoExiste"));
 	}
+	
 	
 	@Test
 	public void test02() {

@@ -4,7 +4,9 @@ import static org.junit.Assert.*;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.junit.AfterClass;
@@ -26,6 +28,8 @@ import uclm.esi.equipo01.http.Manager;
 import uclm.esi.equipo01.http.OrderController;
 import uclm.esi.equipo01.model.DatabaseSequence;
 import uclm.esi.equipo01.model.Order;
+import uclm.esi.equipo01.model.OrderRate;
+import uclm.esi.equipo01.model.PlateAndOrder;
 import uclm.esi.equipo01.service.OrderService;
 
 @RunWith(SpringRunner.class)
@@ -126,8 +130,9 @@ public class OrderTests {
 		Mockito.when(service.makeOrder(jso,idClient)).thenReturn(new ResponseEntity<>(HttpStatus.OK));
 		ResponseEntity<String> httpResponse = controller.makeOrder(info,idClient);	
 		assertEquals(HttpStatus.OK, httpResponse.getStatusCode());
-	}
+		this.testModificarOrden();
 
+	}
 	
 	/*********************************************************************
 	*
@@ -244,6 +249,28 @@ public class OrderTests {
 		assertEquals(valueExpected.getStatusCode(), result.getStatusCode());
 	}
 	
+	//////////////////////////////////////////////////////////////////////
+	//NUEVOS TESTS HECHOS A PARTIR DE AQUI EN EL SPRINT DE MANTENIMIENTO//
+	//////////////////////////////////////////////////////////////////////
+	@Test 
+	public void test33() {
+		List<Order> result = orderService.showAllOrders();
+		assertNotNull(result);
+	}
+	
+	@Test 
+	public void test34() {
+		long restaurantID = 1;
+		List<Order> result = orderService.showAllOrdersByRestaurant(restaurantID);
+		assertNotNull(result);
+	}
+	
+	@Test 
+	public void test35() {
+		long clientID = 1;
+		List<Order> result = orderService.showAllOrdersByClient(clientID);
+		assertNotNull(result);
+	}
 	
 	/*********************************************************************
 	*
@@ -272,6 +299,26 @@ public class OrderTests {
 		
 		Mockito.when(service.modifyOrder(jso, id)).thenReturn(new ResponseEntity<>("El pedido se ha modificado correctamente", HttpStatus.OK));
 		ResponseEntity<String> httpResponse = controller.modifyOrder(info, id);
+		assertEquals(HttpStatus.OK, httpResponse.getStatusCode());
+	}
+	
+	public void testModificarOrden() {
+		Map<String, Object> info = new HashMap<String, Object>();
+		info.put("restaurantID", "1");
+		info.put("clientID", "1");
+		
+		JSONObject infoPlate = new JSONObject();
+		infoPlate.put("price", 10);
+		infoPlate.put("quantity", 1);
+		JSONObject cart = new JSONObject();
+		cart.put("1", infoPlate);	
+		info.put("cart", cart);
+		
+		long id = 1;
+		
+		JSONObject jso = new JSONObject(info);
+		Mockito.when(service.modificaOrden(jso, id)).thenReturn(new ResponseEntity<>("El pedido se ha modificado correctamente", HttpStatus.OK));
+		ResponseEntity<String> httpResponse = controller.modificarOrden(info, id);	
 		assertEquals(HttpStatus.OK, httpResponse.getStatusCode());
 	}
 	
@@ -352,6 +399,32 @@ public class OrderTests {
 	    ResponseEntity<String> valueExpected = new ResponseEntity<>("El pedido se ha  modificado correctamente", HttpStatus.OK);
 		assertEquals(valueExpected.getStatusCode(), result.getStatusCode());
 	}
+		
+	//////////////////////////////////////////////////////////////////////
+	//NUEVOS TESTS HECHOS A PARTIR DE AQUI EN EL SPRINT DE MANTENIMIENTO//
+	//////////////////////////////////////////////////////////////////////
+	@Test 
+	public void test36() {
+		long id = 30;
+		List<Order> result = orderService.showAllOrdersByRider(id);
+		assertNotNull(result);
+	}
+
+	@Test 
+	public void test37() {
+		long orderID = 1;
+		List<PlateAndOrder> result = orderService.showPlatesByOrder(orderID);
+		assertNotNull(result);
+	}
+
+	@Test 
+	public void test38() {
+		long orderID = 1;
+		OrderRate result = orderService.showOrderRate(orderID);
+		assertNotNull(result);
+	}
+	
+	//////////////////////////////////////
 	
 	@Test
 	public void test12() {
@@ -558,6 +631,211 @@ public class OrderTests {
 	    ResponseEntity<String> result = orderService.deleteOrder(idOrder);
 	    ResponseEntity<String> valueExpected = new ResponseEntity<>("Pedido eliminado correctamente", HttpStatus.BAD_REQUEST);
 		assertEquals(valueExpected.getStatusCode(), result.getStatusCode());
+	}
+	
+	//////////////////////////////////////////////////////////////////////
+	//NUEVOS TESTS HECHOS A PARTIR DE AQUI EN EL SPRINT DE MANTENIMIENTO//
+	//////////////////////////////////////////////////////////////////////
+	/*********************************************************************
+	*
+	* - Method name: test26
+	* - Description of the Method: 
+	* - Calling arguments: 
+	* - Return value: 
+	* - Required Files: 
+	* - List of Checked Exceptions and an indication of when each exception
+	* is thrown: 
+	*
+	*********************************************************************/
+	@Test
+	public void test26() {
+		Map<String, Object> info = new HashMap<String, Object>();
+		JSONObject order = new JSONObject();
+		
+		order.put("id", "1");
+		order.put("clientID", "1");
+		order.put("riderID", "1");
+		order.put("restaurantID", "1");
+		order.put("state", "NEW");
+		order.put("price", "40");
+		order.put("releaseDate", "2022-12-03T10:15:30");
+	   
+		info.put("order", order);
+		info.put("rateRestaurant", "1");
+		info.put("rateRider", "1");
+		info.put("description", "Muy bien");
+		
+		
+		JSONObject jso = new JSONObject(info);
+		
+		Mockito.when(service.rateOrder(jso)).thenReturn(new ResponseEntity<>("Pedido valorado correctamente", HttpStatus.OK));
+		ResponseEntity<String> httpResponse = controller.rateOrder(info);
+		assertEquals(HttpStatus.OK, httpResponse.getStatusCode());
+	}
+	
+	/*********************************************************************
+	*
+	* - Method name: test27
+	* - Description of the Method: 
+	* - Calling arguments: 
+	* - Return value: 
+	* - Required Files: 
+	* - List of Checked Exceptions and an indication of when each exception
+	* is thrown: 
+	*
+	*********************************************************************/
+	@Test
+	public void test27() {
+		
+		JSONObject info = new JSONObject();
+		JSONObject order = new JSONObject();
+		
+		order.put("id", "1");
+		order.put("clientID", "1");
+		order.put("riderID", "1");
+		order.put("restaurantID", "1");
+		order.put("state", "NEW");
+		order.put("price", "40");
+		order.put("releaseDate", "2022-12-03T10:15:30");
+	   
+		info.put("order", order);
+		info.put("rateRestaurant", "1");
+		info.put("rateRider", "1");
+		info.put("description", "Muy bien");
+		
+	    ResponseEntity<String> result = orderService.rateOrder(info);
+	    ResponseEntity<String> valueExpected = new ResponseEntity<>("Pedido valorado correctamente", HttpStatus.OK);
+		assertEquals(valueExpected.getStatusCode(), result.getStatusCode());
+		
+		order.put("state", "ONTHEWAY");
+		result = orderService.rateOrder(info);
+	    valueExpected = new ResponseEntity<>("Pedido valorado correctamente", HttpStatus.OK);
+		assertEquals(valueExpected.getStatusCode(), result.getStatusCode());
+		
+		order.put("state", "DELIVERED");
+		result = orderService.rateOrder(info);
+	    valueExpected = new ResponseEntity<>("Pedido valorado correctamente", HttpStatus.OK);
+		assertEquals(valueExpected.getStatusCode(), result.getStatusCode());
+		
+	}
+	
+	/*********************************************************************
+	*
+	* - Method name: test28 to test29
+	* - Description of the Method: 
+	* - Calling arguments: 
+	* - Return value: 
+	* - Required Files: 
+	* - List of Checked Exceptions and an indication of when each exception
+	* is thrown: 
+	*
+	*********************************************************************/
+	@Test
+	public void test28() {
+
+		List<Integer> rates = new ArrayList<Integer>();
+		
+		for(int i = 0; i < 6; i++) {
+			rates.add(i);
+		}
+		
+	    double result = orderService.calculateAverageRate(rates);
+	    double valueExpected = 3;
+		assertEquals(valueExpected, result, 0.5);
+	}
+	
+	@Test
+	public void test29() {
+
+		List<Integer> rates = new ArrayList<Integer>();
+		
+		double result = orderService.calculateAverageRate(rates);
+		assertEquals(0, result, 0.1);
+	}
+	
+	/*********************************************************************
+	*
+	* - Method name: test30
+	* - Description of the Method: 
+	* - Calling arguments: 
+	* - Return value: 
+	* - Required Files: 
+	* - List of Checked Exceptions and an indication of when each exception
+	* is thrown: 
+	*
+	*********************************************************************/
+	@Test
+	public void test30() {
+		Map<String, Object> info = new HashMap<String, Object>();
+		
+		info.put("simultaneousRiderOrders", "5");
+		
+		JSONObject jso = new JSONObject(info);
+		
+		Mockito.when(service.setSimultaneousRiderOrders(jso)).thenReturn(new ResponseEntity<>("Número de pedidos simultaneos actualizado correctamente", HttpStatus.OK));
+		ResponseEntity<String> httpResponse = controller.setSimultaneousRiderOrders(info);
+		assertEquals(HttpStatus.OK, httpResponse.getStatusCode());
+	}
+	
+	/*********************************************************************
+	*
+	* - Method name: test31
+	* - Description of the Method: 
+	* - Calling arguments: 
+	* - Return value: 
+	* - Required Files: 
+	* - List of Checked Exceptions and an indication of when each exception
+	* is thrown: 
+	*
+	*********************************************************************/
+	@Test
+	public void test31() {
+		
+		JSONObject info = new JSONObject();
+		
+		info.put("simultaneousRiderOrders", "5");
+		
+	    ResponseEntity<String> result = orderService.setSimultaneousRiderOrders(info);
+	    ResponseEntity<String> valueExpected = new ResponseEntity<>("Número de pedidos sumultaneos actualizado correctamente", HttpStatus.OK);
+		assertEquals(valueExpected.getStatusCode(), result.getStatusCode());
+		
+		info.put("simultaneousRiderOrders", "-1" );
+		
+	    result = orderService.setSimultaneousRiderOrders(info);
+	    valueExpected = new ResponseEntity<>("Número de pedidos no válido", HttpStatus.BAD_REQUEST);
+		assertEquals(valueExpected.getStatusCode(), result.getStatusCode());
+	}
+	
+	/*********************************************************************
+	*
+	* - Method name: test32
+	* - Description of the Method: 
+	* - Calling arguments: 
+	* - Return value: 
+	* - Required Files: 
+	* - List of Checked Exceptions and an indication of when each exception
+	* is thrown: 
+	*
+	*********************************************************************/
+	@Test
+	public void test32() {
+	    Map<String, Object> info = new HashMap<String, Object>();
+	    
+		info.put("restaurantID", "1");
+		JSONObject infoPlate = new JSONObject();
+		infoPlate.put("price", 10);
+		infoPlate.put("quantity", 1);
+		JSONObject cart = new JSONObject();
+		cart.put("1", infoPlate);	
+		info.put("cart", cart);	
+		
+	    long idClient = 1;
+		
+		JSONObject jso = new JSONObject(info);	
+		
+		Mockito.when(service.makeOrder(jso, idClient)).thenReturn(new ResponseEntity<>(HttpStatus.OK));
+		ResponseEntity<String> httpResponse = controller.makeOrderByEmail(info, "pepegamo@mail.com");	
+		assertEquals(HttpStatus.EXPECTATION_FAILED, httpResponse.getStatusCode());
 	}
 	
 	

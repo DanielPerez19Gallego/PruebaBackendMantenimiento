@@ -4,6 +4,7 @@ import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.github.openjson.JSONObject;
@@ -17,6 +18,7 @@ import uclm.esi.equipo01.http.Manager;
 import uclm.esi.equipo01.http.UserController;
 import uclm.esi.equipo01.model.Client;
 import uclm.esi.equipo01.model.DatabaseSequence;
+import uclm.esi.equipo01.model.Plate;
 import uclm.esi.equipo01.service.ClientService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -136,6 +138,15 @@ public class ClientTests {
 		ResponseEntity<String> httpResponse = clientController.modifyClient(info, id);
 		
 		assertEquals(HttpStatus.OK, httpResponse.getStatusCode());
+		
+		//////////////////////////////////////////////////////////////////////
+		//NUEVOS TESTS HECHOS A PARTIR DE AQUI EN EL SPRINT DE MANTENIMIENTO//
+		//////////////////////////////////////////////////////////////////////
+		Client result_1 = clientService.showClient(id);
+		assertNotNull(result_1);
+		
+		List<Client> result_2 = clientService.showAllClients();
+		assertNotNull(result_2);
 	}
 	
 	@Test

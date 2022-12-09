@@ -5,6 +5,7 @@ import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.github.openjson.JSONObject;
@@ -22,6 +23,7 @@ import uclm.esi.equipo01.model.DatabaseSequence;
 import uclm.esi.equipo01.model.Plate;
 import uclm.esi.equipo01.model.Restaurant;
 import uclm.esi.equipo01.service.RestaurantService;
+import uclm.esi.equipo01.service.ValidatorService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -46,6 +48,9 @@ public class RestaurantTests {
 	
 	private RestaurantController controller;
 	private RestaurantService service;
+	
+	@Autowired
+	private ValidatorService validatorService;
 	
     private static MongoOperations mongoOperations;
 
@@ -407,8 +412,28 @@ public class RestaurantTests {
 		ResponseEntity<String> result = restaurantService.modifyRestaurant(info, id);
 	    ResponseEntity<String> valueExpected = new ResponseEntity<>("El restaurante modificado correctamente", HttpStatus.OK);
 		assertEquals(valueExpected.getStatusCode(), result.getStatusCode());
+		
+		Restaurant result_1 = restaurantService.showRestaurant(id);
+		assertNotNull(result_1);
 	}
 	
+	//////////////////////////////////////////////////////////////////////
+	//NUEVOS TESTS HECHOS A PARTIR DE AQUI EN EL SPRINT DE MANTENIMIENTO//
+	//////////////////////////////////////////////////////////////////////
+	@Test 
+	public void test48() {
+		List<Restaurant> result = restaurantService.showAllRestaurants();
+		assertNotNull(result);
+		
+		boolean result_1 = validatorService.isRepeatedEmail(result, "comida123@gmail.com");
+		assertTrue(result_1);
+		
+		boolean result_2 = validatorService.isRepeatedEmail(result, "comida12333@gmail.com");
+		assertTrue(result_2);
+		
+	}
+	
+	//////////////////////////////////////////////////////////////////////
 	@Test
 	public void test15() {
 		JSONObject info = new JSONObject();
@@ -661,6 +686,7 @@ public class RestaurantTests {
 		ResponseEntity<String> httpResponse = controller.modifyPlate(info, id);
 		
 		assertEquals(HttpStatus.OK, httpResponse.getStatusCode());
+	
 	}
 	
 	@Test
@@ -769,7 +795,23 @@ public class RestaurantTests {
 		ResponseEntity<String> result = restaurantService.modifyPlate(info, id);
 	    ResponseEntity<String> valueExpected = new ResponseEntity<>("Plato modificado incorrectamente", HttpStatus.BAD_REQUEST);
 		assertEquals(valueExpected.getStatusCode(), result.getStatusCode());
+		
+		//////////////////////////////////////////////////////////////////////
+		//NUEVOS TESTS HECHOS A PARTIR DE AQUI EN EL SPRINT DE MANTENIMIENTO//
+		//////////////////////////////////////////////////////////////////////
+		Plate result_1 = restaurantService.showPlate(id);
+		assertNotNull(result_1);
+		
+		List<Plate> result_2 = restaurantService.showAllPlatesFromRestaurant(id);
+		assertNotNull(result_2);
+		
+		boolean result_3 = validatorService.isRepeatedPlate(result_2, "XXX", id);
+		assertTrue(result_3);
+		
+		boolean result_4 = validatorService.isRepeatedPlate(result_2, "XXX0000", id);
+		assertFalse(result_4);
 	}
+	
 	
 	/*********************************************************************
 	*

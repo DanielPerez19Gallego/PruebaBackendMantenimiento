@@ -13,6 +13,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import uclm.esi.equipo01.http.UserController;
 import uclm.esi.equipo01.service.ClientService;
+import uclm.esi.equipo01.service.RiderService;
 import uclm.esi.equipo01.service.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +37,9 @@ public class LoginTests {
 	
 	@Autowired
 	private ClientService clientService;
+	
+	@Autowired
+	private RiderService riderService;
 	
 	private UserController controller;
 	private UserService service;
@@ -231,5 +235,76 @@ public class LoginTests {
 	    ResponseEntity<String> valueExpected = new ResponseEntity<>("Usuario logeado correctamente", HttpStatus.OK);
 	    assertEquals(valueExpected.getStatusCode(), result.getStatusCode());
 	}
+	
+	
+	//////////////////////////////////////////////////////////////////////
+	//NUEVOS TESTS HECHOS A PARTIR DE AQUI EN EL SPRINT DE MANTENIMIENTO//
+	//////////////////////////////////////////////////////////////////////
+	/*********************************************************************
+	*
+	* - Method name: test13 to test14
+	* - Description of the Method: Tests carried out to login in user controller
+	* - Calling arguments: A list of the calling arguments, their types, and
+	* brief explanations of what they do: None
+	* - Return value: None
+	* - Required Files: None
+	* - List of Checked Exceptions and an indication of when each exception
+	* is thrown: None.
+	*
+	*********************************************************************/
+	@Test
+	public void test13() {
+	    Map<String, Object> info = new HashMap<String, Object>();
+	    
+		info.put("email", "carlosphin@gmail.com");
+		info.put("password", "Pepito23@");
+		
+		JSONObject jso = new JSONObject(info);
+		
+		Mockito.when(service.login(jso)).thenReturn(new ResponseEntity<>("Rider logeado correctamente", HttpStatus.OK));
+		ResponseEntity<String> httpResponse = controller.login(info);
+		
+		assertEquals(HttpStatus.UNAUTHORIZED, httpResponse.getStatusCode());
+	}
+	
+	@Test
+	public void test14() {
+	    Map<String, Object> info = new HashMap<String, Object>();
+		info.put("email", "");
+		info.put("password", "client123*CLIENT");
+		
+		JSONObject jso = new JSONObject(info);
+		
+		Mockito.when(service.login(jso)).thenReturn(new ResponseEntity<>("Email o contraseña no válida", HttpStatus.UNAUTHORIZED));
+		ResponseEntity<String> httpResponse = controller.login(info);
+		
+		assertEquals(HttpStatus.UNAUTHORIZED, httpResponse.getStatusCode());
+	}
+	
+	
+	/*********************************************************************
+	*
+	* - Method name: test03 to test12
+	* - Description of the Method: Tests carried out to login in client service
+	* - Calling arguments: A list of the calling arguments, their types, and
+	* brief explanations of what they do: None
+	* - Return value: None
+	* - Required Files: None
+	* - List of Checked Exceptions and an indication of when each exception
+	* is thrown: None.
+	*
+	*********************************************************************/
+	@Test
+	public void test15() {
+	    JSONObject info = new JSONObject();
+	    
+		info.put("email", "carlosphinclient@gmail.com");
+		info.put("password", "client123*CLIENT");
+		
+	    ResponseEntity<String> result = riderService.login(info);
+	    ResponseEntity<String> valueExpected = new ResponseEntity<>("Rider logeado correctamente", HttpStatus.OK);
+		assertEquals(valueExpected.getStatusCode(), result.getStatusCode());
+	}
+
 
 }

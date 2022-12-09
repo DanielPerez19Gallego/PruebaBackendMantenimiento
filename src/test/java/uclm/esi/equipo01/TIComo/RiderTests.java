@@ -5,6 +5,7 @@ import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.github.openjson.JSONObject;
@@ -358,6 +359,15 @@ public class RiderTests {
 		ResponseEntity<String> httpResponse = riderController.modifyRider(info, id);
 		
 		assertEquals(HttpStatus.BAD_REQUEST, httpResponse.getStatusCode());
+		
+		//////////////////////////////////////////////////////////////////////
+		//NUEVOS TESTS HECHOS A PARTIR DE AQUI EN EL SPRINT DE MANTENIMIENTO//
+		//////////////////////////////////////////////////////////////////////
+		Rider result_1 = riderService.showRider(id);
+		assertNotNull(result_1);
+		
+		List<Rider> result_2 = riderService.showAllRiders();
+		assertNotNull(result_2);
 	}
 	
 	@Test

@@ -5,6 +5,7 @@ import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.github.openjson.JSONObject;
@@ -369,8 +370,23 @@ public class AdminTests {
 	    ResponseEntity<String> result = adminService.register(info);
 	    ResponseEntity<String> valueExpected = new ResponseEntity<>("Administrador registrado incorrectamente", HttpStatus.BAD_REQUEST);
 		assertEquals(valueExpected.getStatusCode(), result.getStatusCode());
+		
+		long id = 2;
+		Admin result_1 = adminService.showAdmin(id);
+		assertNotNull(result_1);
+	}
+	
+	//////////////////////////////////////////////////////////////////////
+	//NUEVOS TESTS HECHOS A PARTIR DE AQUI EN EL SPRINT DE MANTENIMIENTO//
+	//////////////////////////////////////////////////////////////////////
+	@Test 
+	public void test37() {
+		List<Admin> result = adminService.showAllAdmins();
+		assertNotNull(result);
 	}
 
+	//////////////////////////////////////////////////////////////////////
+	
 	/*********************************************************************
 	*
 	* - Method name: test15 to test16
@@ -435,6 +451,14 @@ public class AdminTests {
 	* is thrown: None.
 	*
 	*********************************************************************/
+	/** DA UN ERROR AL EJECUTAR ESTE TEST
+	@Test 
+	public void test38() {
+		long id = 2;
+		Admin result = adminService.showAdmin(id);
+		assertNotNull(result);
+	}
+	**/
 	@Test
 	public void test17() {
 	    JSONObject info = new JSONObject();
@@ -449,6 +473,23 @@ public class AdminTests {
 		
 	    ResponseEntity<String> result = adminService.modifyAdmin(info, id);
 	    ResponseEntity<String> valueExpected = new ResponseEntity<>("Administrador modificado correctamente", HttpStatus.OK);
+		assertEquals(valueExpected.getStatusCode(), result.getStatusCode());
+	}
+	
+	@Test 
+	public void test38() {
+		JSONObject info = new JSONObject();
+	    
+		info.put("name", "Lucía Petra");
+		info.put("surname", "Martinez Gonzalez");
+		info.put("zone", "XXX");
+		info.put("email", "carlosphin46@gmail.com");
+		info.put("password", "Pepito23@45mago");
+		
+		long id = 56;
+		
+	    ResponseEntity<String> result = adminService.modifyAdmin(info, id);
+	    ResponseEntity<String> valueExpected = new ResponseEntity<>("Admin no encontrado", HttpStatus.BAD_REQUEST);
 		assertEquals(valueExpected.getStatusCode(), result.getStatusCode());
 	}
 	
